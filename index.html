@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OVA — Disciplina y Organizaciones Inteligentes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0f1e;
+  --card:#111827;
+  --accent:#00e5ff;
+  --accent2:#7c3aed;
+  --gold:#f59e0b;
+  --text:#e2e8f0;
+  --muted:#94a3b8;
+  --border:rgba(0,229,255,0.15);
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+
+/* ── CANVAS BG ── */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:.35}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;width:100%;z-index:100;background:rgba(10,15,30,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px}
+.nav-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--accent);letter-spacing:.05em}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--accent)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{width:24px;height:2px;background:var(--accent);border-radius:2px;transition:.3s}
+
+/* ── HERO ── */
+#hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px}
+.hero-tag{display:inline-block;background:rgba(0,229,255,.1);border:1px solid var(--accent);color:var(--accent);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;padding:6px 18px;border-radius:50px;margin-bottom:28px}
+#hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,6vw,4.8rem);font-weight:900;line-height:1.1;max-width:820px;margin:auto}
+#hero h1 span{color:var(--accent)}
+.hero-sub{margin:24px auto 0;max-width:560px;color:var(--muted);font-size:1rem;line-height:1.7}
+.hero-cta{margin-top:40px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{padding:13px 30px;border-radius:50px;font-weight:600;font-size:.9rem;cursor:pointer;text-decoration:none;transition:all .25s;border:none}
+.btn-primary{background:var(--accent);color:#0a0f1e}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,255,.35)}
+.btn-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
+.btn-outline:hover{background:var(--accent);color:#0a0f1e}
+.hero-chips{margin-top:48px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.chip{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:#c4b5fd;padding:5px 14px;border-radius:50px;font-size:.78rem}
+
+/* ── SECTIONS ── */
+section{position:relative;z-index:1;padding:80px 24px}
+.section-inner{max-width:1100px;margin:auto}
+.sec-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:12px}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;margin-bottom:16px}
+.sec-desc{color:var(--muted);max-width:640px;line-height:1.7;margin-bottom:48px}
+
+/* ── CARDS GRID ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,229,255,.12)}
+.card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:16px}
+.card h3{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:8px}
+.card p{color:var(--muted);font-size:.88rem;line-height:1.6}
+
+/* ── DISCIPLINES SECTION ── */
+.disc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.disc-card{border-radius:var(--radius);padding:28px;position:relative;overflow:hidden;cursor:pointer;transition:.25s}
+.disc-card::before{content:'';position:absolute;inset:0;opacity:.08;background:currentColor}
+.disc-card:hover{transform:scale(1.02)}
+.disc-card .dc-num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;opacity:.18;position:absolute;right:20px;top:10px}
+.disc-card h3{font-size:1.05rem;font-weight:600;margin-bottom:8px}
+.disc-card p{font-size:.85rem;line-height:1.6;opacity:.8}
+.d1{color:#00e5ff;border:1px solid rgba(0,229,255,.25)}
+.d2{color:#7c3aed;border:1px solid rgba(124,58,237,.25)}
+.d3{color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
+.d4{color:#10b981;border:1px solid rgba(16,185,129,.25)}
+.d5{color:#f43f5e;border:1px solid rgba(244,63,94,.25)}
+
+/* ── EXAMPLES ── */
+.examples-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+.ex-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.ex-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:8px}
+.ex-card h3{font-size:1rem;font-weight:600;margin-bottom:10px}
+.ex-card p{color:var(--muted);font-size:.85rem;line-height:1.6}
+.ex-tag{display:inline-block;margin-top:12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:var(--gold);font-size:.72rem;padding:3px 10px;border-radius:50px}
+
+/* ── EXERCISES ── */
+.ex-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin-bottom:24px}
+.ex-box h3{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:16px}
+.ex-box p{color:var(--muted);margin-bottom:16px;line-height:1.6;font-size:.9rem}
+.reveal-btn{background:rgba(0,229,255,.1);border:1px solid var(--accent);color:var(--accent);padding:10px 24px;border-radius:50px;cursor:pointer;font-size:.85rem;font-weight:600;transition:.2s}
+.reveal-btn:hover{background:var(--accent);color:#0a0f1e}
+.answer-box{margin-top:16px;background:rgba(0,229,255,.05);border-left:3px solid var(--accent);padding:16px;border-radius:8px;display:none;font-size:.88rem;line-height:1.6}
+
+/* ── VIDEO SECTION ── */
+.videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.vid-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.vid-embed{width:100%;aspect-ratio:16/9}
+.vid-embed iframe{width:100%;height:100%;border:none}
+.vid-info{padding:16px}
+.vid-info h4{font-size:.95rem;font-weight:600;margin-bottom:6px}
+.vid-info p{color:var(--muted);font-size:.82rem}
+
+/* ── GAMES ── */
+.game-tabs{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.game-tab{padding:10px 22px;border-radius:50px;border:1.5px solid var(--border);color:var(--muted);background:transparent;cursor:pointer;font-size:.85rem;font-weight:500;transition:.2s}
+.game-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,.08)}
+.game-panel{display:none;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px}
+.game-panel.active{display:block}
+
+/* GAME 1 - MATCH */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.match-col{display:flex;flex-direction:column;gap:10px}
+.match-item{padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:500;transition:.2s;user-select:none}
+.match-item:hover{border-color:var(--accent);color:var(--accent)}
+.match-item.selected{border-color:var(--accent);background:rgba(0,229,255,.1);color:var(--accent)}
+.match-item.correct{border-color:#10b981;background:rgba(16,185,129,.1);color:#10b981;pointer-events:none}
+.match-item.wrong{border-color:#f43f5e;background:rgba(244,63,94,.1);color:#f43f5e}
+.match-msg{margin-top:16px;font-size:.9rem;min-height:24px;font-weight:600}
+.match-score{margin-top:8px;color:var(--muted);font-size:.85rem}
+
+/* GAME 2 - SCRAMBLE */
+.word-display{font-family:'Playfair Display',serif;font-size:2rem;letter-spacing:.2em;color:var(--accent);margin-bottom:24px;text-align:center}
+.word-hint{color:var(--muted);font-size:.9rem;margin-bottom:20px;text-align:center}
+.word-input-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.word-input{background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:10px;padding:10px 18px;color:var(--text);font-size:1rem;outline:none;flex:1;max-width:260px}
+.word-input:focus{border-color:var(--accent)}
+.word-result{margin-top:16px;text-align:center;font-weight:600;min-height:24px}
+.game-progress{margin-top:20px;text-align:center;color:var(--muted);font-size:.85rem}
+
+/* GAME 3 - TRUE/FALSE */
+.tf-question{font-size:1.05rem;line-height:1.6;margin-bottom:24px;min-height:60px}
+.tf-btns{display:flex;gap:16px;justify-content:center}
+.tf-btn{padding:12px 36px;border-radius:50px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-size:.95rem;font-weight:600;cursor:pointer;transition:.2s}
+.tf-btn:hover{border-color:var(--accent);color:var(--accent)}
+.tf-feedback{margin-top:20px;text-align:center;min-height:24px;font-size:.9rem;font-weight:600}
+.tf-score{margin-top:12px;text-align:center;color:var(--muted);font-size:.85rem}
+.tf-next{margin-top:16px;display:flex;justify-content:center}
+
+/* ── QUIZ ── */
+.quiz-wrap{max-width:700px;margin:auto}
+.quiz-progress-bar{background:rgba(255,255,255,.07);border-radius:50px;height:6px;margin-bottom:32px;overflow:hidden}
+.quiz-progress-fill{height:100%;background:var(--accent);border-radius:50px;transition:width .4s}
+.quiz-q{font-size:1.05rem;font-weight:500;line-height:1.6;margin-bottom:20px}
+.quiz-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.quiz-opt{background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:.9rem;transition:.2s;text-align:left}
+.quiz-opt:hover{border-color:var(--accent);background:rgba(0,229,255,.06)}
+.quiz-opt.correct{border-color:#10b981;background:rgba(16,185,129,.1);color:#10b981;pointer-events:none}
+.quiz-opt.wrong{border-color:#f43f5e;background:rgba(244,63,94,.1);color:#f43f5e;pointer-events:none}
+.quiz-feedback{font-size:.88rem;min-height:20px;color:var(--muted);margin-bottom:12px}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center}
+.quiz-counter{color:var(--muted);font-size:.85rem}
+.quiz-result{text-align:center;padding:40px 0}
+.quiz-result .big-score{font-family:'Playfair Display',serif;font-size:4rem;color:var(--accent)}
+.quiz-result p{color:var(--muted);margin-top:8px}
+.quiz-result .grade{font-size:1.1rem;font-weight:600;margin-top:16px}
+
+/* ── CREDITS ── */
+.credits-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.cred-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.cred-card h4{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:12px;color:var(--accent)}
+.cred-card p,.cred-card li{color:var(--muted);font-size:.85rem;line-height:1.7}
+.cred-card ul{padding-left:18px}
+.ref-item{border-left:2px solid var(--accent2);padding:8px 14px;margin-bottom:10px;background:rgba(124,58,237,.05);border-radius:0 8px 8px 0;font-size:.82rem;color:var(--muted);line-height:1.5}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;text-align:center;padding:32px 24px;border-top:1px solid var(--border);color:var(--muted);font-size:.82rem}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:rgba(10,15,30,.97);padding:20px;gap:16px;border-bottom:1px solid var(--border)}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .match-grid{grid-template-columns:1fr}
+}
+
+/* ── SCROLL ANIMATIONS ── */
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s}
+.fade-up.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">OVA · TGS #17</span>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#contexto">Contexto</a></li>
+      <li><a href="#conceptos">Conceptos</a></li>
+      <li><a href="#disciplinas">Disciplinas</a></li>
+      <li><a href="#ejemplos">Ejemplos</a></li>
+      <li><a href="#ejercicios">Ejercicios</a></li>
+      <li><a href="#juegos">Juegos</a></li>
+      <li><a href="#videos">Videos</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#creditos">Créditos</a></li>
+    </ul>
+    <div class="hamburger" id="ham" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div>
+    <div class="hero-tag">Teoría General de Sistemas · Proyecto #17</div>
+    <h1>Disciplina y <span>Organizaciones</span> Inteligentes</h1>
+    <p class="hero-sub">Una exploración profunda de las cinco disciplinas que transforman las organizaciones comunes en sistemas capaces de aprender, adaptarse y crecer continuamente.</p>
+    <div class="hero-cta">
+      <a href="#contexto" class="btn btn-primary">Comenzar</a>
+      <a href="#quiz" class="btn btn-outline">Ir al Quiz</a>
+    </div>
+    <div class="hero-chips">
+      <span class="chip">Peter Senge</span>
+      <span class="chip">Pensamiento Sistémico</span>
+      <span class="chip">La Quinta Disciplina</span>
+      <span class="chip">Aprendizaje Organizacional</span>
+      <span class="chip">Modelos Mentales</span>
+      <span class="chip">Visión Compartida</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTEXTO -->
+<section id="contexto">
+  <div class="section-inner fade-up">
+    <div class="sec-label">01 · Contextualización</div>
+    <h2 class="sec-title">¿Por qué importa esto?</h2>
+    <p class="sec-desc">En un mundo de cambio constante, las organizaciones que no aprenden quedan obsoletas. El concepto de <strong>Organización Inteligente</strong> surge como respuesta a esta necesidad.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(0,229,255,.1)">🧠</div>
+        <h3>Aprendizaje Continuo</h3>
+        <p>Las organizaciones inteligentes son aquellas capaces de crear, adquirir y transferir conocimiento, modificando su comportamiento para reflejar nuevos saberes y perspectivas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(124,58,237,.1)">🌀</div>
+        <h3>Pensamiento Sistémico</h3>
+        <p>Ver el todo, no solo las partes. Comprender que cada acción genera consecuencias en cadena dentro del sistema organizacional es clave para una gestión efectiva.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(245,158,11,.1)">🏛️</div>
+        <h3>Origen del Concepto</h3>
+        <p>El término fue popularizado por <strong>Peter Senge</strong> en 1990 con su obra <em>La Quinta Disciplina</em>, revolucionando la administración moderna y la teoría organizacional.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(16,185,129,.1)">🔗</div>
+        <h3>Relación con la TGS</h3>
+        <p>Las organizaciones son sistemas abiertos que interactúan con su entorno. La TGS aporta el marco conceptual para entender sus dinámicas, flujos y propiedades emergentes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPTOS -->
+<section id="conceptos" style="background:rgba(255,255,255,.02)">
+  <div class="section-inner fade-up">
+    <div class="sec-label">02 · Marco Teórico</div>
+    <h2 class="sec-title">Conceptos Fundamentales</h2>
+    <p class="sec-desc">Bases teóricas que sustentan el estudio de la disciplina y las organizaciones que aprenden.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(0,229,255,.1)">📖</div>
+        <h3>Organización Inteligente</h3>
+        <p>Según Senge (1990), es aquella en la que las personas expanden continuamente su capacidad de crear resultados que realmente desean, donde se fomenta la aspiración colectiva y las personas continuamente aprenden a aprender juntas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(124,58,237,.1)">⚙️</div>
+        <h3>Aprendizaje Organizacional</h3>
+        <p>Proceso mediante el cual las organizaciones modifican su comportamiento a partir de experiencias. Distingue entre aprendizaje de circuito simple (corregir errores) y doble circuito (cuestionar supuestos subyacentes). (Argyris y Schön, 1978)</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(245,158,11,.1)">🔄</div>
+        <h3>Retroalimentación Sistémica</h3>
+        <p>En sistemas organizacionales, la retroalimentación puede ser reforzadora (amplifica comportamientos) o compensadora (estabiliza el sistema). Comprender estos ciclos es esencial para el cambio planificado.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(16,185,129,.1)">🧩</div>
+        <h3>Bucles Causales</h3>
+        <p>Herramientas del pensamiento sistémico que representan cómo las variables de un sistema se influyen mutuamente. Permiten identificar palancas de cambio y anticipar consecuencias no deseadas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(244,63,94,.1)">🌱</div>
+        <h3>Capacidad Generativa</h3>
+        <p>La capacidad de una organización no solo de adaptarse (aprendizaje adaptativo) sino de crear activamente su futuro deseado. Va más allá de la supervivencia; implica innovación y propósito.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(0,229,255,.1)">🏗️</div>
+        <h3>Arquitectura Social</h3>
+        <p>Conjunto de estructuras, procesos y prácticas que dan forma al comportamiento colectivo de una organización. Las organizaciones inteligentes diseñan conscientemente su arquitectura para facilitar el aprendizaje.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAS 5 DISCIPLINAS -->
+<section id="disciplinas">
+  <div class="section-inner fade-up">
+    <div class="sec-label">03 · Las Cinco Disciplinas</div>
+    <h2 class="sec-title">El Modelo de Peter Senge</h2>
+    <p class="sec-desc">Las cinco disciplinas de Senge son prácticas individuales y colectivas que, integradas, forman la base de una organización inteligente.</p>
+    <div class="disc-grid">
+      <div class="disc-card d1">
+        <div class="dc-num">01</div>
+        <h3>🌀 Pensamiento Sistémico</h3>
+        <p>La disciplina integradora. Ver el mundo como un sistema de interrelaciones y no como una cadena de causas y efectos. Permite identificar patrones y estructuras subyacentes que gobiernan el comportamiento del sistema organizacional. Es la "quinta disciplina" que da nombre a la obra de Senge.</p>
+      </div>
+      <div class="disc-card d2">
+        <div class="dc-num">02</div>
+        <h3>💡 Dominio Personal</h3>
+        <p>La disciplina de crecimiento personal. Clarificar y profundizar continuamente la visión personal, enfocar energías y desarrollar paciencia. Va más allá de las competencias: es un espíritu de aprendizaje genuino. Las organizaciones aprenden a través de individuos que aprenden.</p>
+      </div>
+      <div class="disc-card d3">
+        <div class="dc-num">03</div>
+        <h3>🗺️ Modelos Mentales</h3>
+        <p>Supuestos e imágenes internamente arraigadas que influyen en nuestra comprensión del mundo y nuestras acciones. El trabajo con modelos mentales implica aprender a descubrir imágenes internas del mundo, llevarlas a la superficie y someterlas a un riguroso escrutinio.</p>
+      </div>
+      <div class="disc-card d4">
+        <div class="dc-num">04</div>
+        <h3>🎯 Visión Compartida</h3>
+        <p>Construcción de un sentido de compromiso genuino con el futuro de la organización. No se impone desde arriba: emerge del diálogo auténtico sobre lo que la gente realmente desea. Cuando hay visión real, las personas aprenden y se superan no porque se les diga, sino porque quieren.</p>
+      </div>
+      <div class="disc-card d5">
+        <div class="dc-num">05</div>
+        <h3>🤝 Aprendizaje en Equipo</h3>
+        <p>Alinear y desarrollar la capacidad del equipo para crear los resultados que sus miembros realmente desean. Parte del diálogo: la capacidad de los miembros del equipo para suspender supuestos e ingresar en un genuino "pensar juntos". Transforma las conversaciones defensivas en exploración colectiva.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EJEMPLOS REALES -->
+<section id="ejemplos" style="background:rgba(255,255,255,.02)">
+  <div class="section-inner fade-up">
+    <div class="sec-label">04 · Casos Reales</div>
+    <h2 class="sec-title">Organizaciones que Aprenden en la Práctica</h2>
+    <p class="sec-desc">Ejemplos concretos de cómo empresas reales han implementado los principios de las organizaciones inteligentes.</p>
+    <div class="examples-grid">
+      <div class="ex-card">
+        <div class="ex-label">Visión Compartida + Pensamiento Sistémico</div>
+        <h3>Toyota — Sistema de Producción Toyota (TPS)</h3>
+        <p>Toyota construyó una cultura de mejora continua (<em>Kaizen</em>) donde cada empleado puede detener la línea de producción para corregir un error. La visión compartida de "cero defectos" y el aprendizaje desde los errores como sistema es un ejemplo paradigmático.</p>
+        <span class="ex-tag">Manufactura</span>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Dominio Personal + Aprendizaje en Equipo</div>
+        <h3>Google — Cultura de Innovación Abierta</h3>
+        <p>Google fomenta que los empleados dediquen el 20% de su tiempo a proyectos personales. Gmail y AdSense nacieron así. Su cultura de "fracasar rápido y aprender" encarna el dominio personal y el aprendizaje colectivo como filosofía organizacional.</p>
+        <span class="ex-tag">Tecnología</span>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Modelos Mentales</div>
+        <h3>Nokia vs. Apple — El Peligro de Modelos Rígidos</h3>
+        <p>Nokia dominó el mercado de celulares pero sus modelos mentales la hicieron subestimar el smartphone. Apple, sin historia en telefonía, vio el futuro con otros lentes. Un ejemplo de cómo los modelos mentales rígidos destruyen organizaciones que no aprenden.</p>
+        <span class="ex-tag">Tecnología</span>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Pensamiento Sistémico</div>
+        <h3>Medellín — Transformación Urbana Sistémica</h3>
+        <p>La ciudad de Medellín pasó de ser la más violenta del mundo a un referente de innovación. La clave fue un enfoque sistémico: educación, transporte, espacios públicos y cultura actuando juntos como sistema, no como parches aislados.</p>
+        <span class="ex-tag">Gobierno</span>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Aprendizaje en Equipo</div>
+        <h3>Pixar — Braintrust y Creatividad Colectiva</h3>
+        <p>Pixar creó el "Braintrust", un grupo que revisa cada película en desarrollo con honestidad radical pero sin autoridad directiva. Nadie da órdenes; todos aprenden juntos. El resultado: años de éxitos consecutivos en innovación narrativa.</p>
+        <span class="ex-tag">Entretenimiento</span>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Las 5 Disciplinas Integradas</div>
+        <h3>Ejército de EE.UU. — After Action Reviews (AAR)</h3>
+        <p>Después de cada operación, el ejército realiza revisiones estructuradas donde todos, sin importar rango, identifican qué funcionó, qué falló y por qué. Este sistema institucionalizado de aprendizaje es considerado uno de los mejores modelos de organización que aprende.</p>
+        <span class="ex-tag">Institucional</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EJERCICIOS -->
+<section id="ejercicios">
+  <div class="section-inner fade-up">
+    <div class="sec-label">05 · Ejercicios</div>
+    <h2 class="sec-title">Practica y Reflexiona</h2>
+    <p class="sec-desc">Ejercicios con retroalimentación inmediata para afianzar los conceptos aprendidos.</p>
+
+    <div class="ex-box">
+      <h3>Ejercicio 1 — Identificación de Disciplinas</h3>
+      <p>Una empresa de tecnología descubre que sus departamentos de ventas y desarrollo trabajan de forma aislada. Deciden organizar reuniones semanales donde comparten sus perspectivas sin jerarquías. Los miembros aprenden a escuchar activamente y suspender juicios. <br><br><strong>¿Qué disciplina de Senge están aplicando principalmente?</strong></p>
+      <button class="reveal-btn" onclick="toggle('ans1')">Ver Respuesta</button>
+      <div id="ans1" class="answer-box">
+        <strong>✅ Aprendizaje en Equipo</strong><br>
+        La empresa está fomentando el diálogo genuino y el "pensar juntos" entre personas de distintas áreas. La clave es la suspensión de supuestos y la exploración colectiva sin jerarquías, características centrales del Aprendizaje en Equipo. Además, hay un elemento de Visión Compartida al buscar un objetivo común entre áreas antes separadas.
+      </div>
+    </div>
+
+    <div class="ex-box">
+      <h3>Ejercicio 2 — Análisis de Bucle Causal</h3>
+      <p>Observa este sistema: <em>Mayor estrés laboral → Más errores → Mayor supervisión → Menor autonomía → Mayor estrés laboral</em>. <br><br><strong>¿Qué tipo de bucle es este? ¿Cómo lo romperías desde la perspectiva del pensamiento sistémico?</strong></p>
+      <button class="reveal-btn" onclick="toggle('ans2')">Ver Respuesta</button>
+      <div id="ans2" class="answer-box">
+        <strong>✅ Es un Bucle Reforzador (o de Retroalimentación Positiva)</strong><br>
+        También llamado "espiral viciosa", amplifica el problema original. Desde el pensamiento sistémico, identificarías la <em>palanca de cambio</em> con mayor apalancamiento. En este caso, intervenir sobre la <strong>autonomía</strong> podría ser más efectivo que reducir la supervisión directamente: dar autonomía reduce el estrés, que reduce los errores, que hace innecesaria la supervisión. Un enfoque de dominio personal también ayuda a que los empleados gestionen el estrés proactivamente.
+      </div>
+    </div>
+
+    <div class="ex-box">
+      <h3>Ejercicio 3 — Modelos Mentales en Acción</h3>
+      <p>Un gerente de una empresa tradicional afirma: <em>"Los empleados solo trabajan bien si los vigilas. Si les das libertad, bajan la productividad."</em> Esto le impide implementar trabajo remoto aunque los datos muestran lo contrario. <br><br><strong>¿Cómo afecta esto a la organización? ¿Cómo aplicarías la disciplina de Modelos Mentales?</strong></p>
+      <button class="reveal-btn" onclick="toggle('ans3')">Ver Respuesta</button>
+      <div id="ans3" class="answer-box">
+        <strong>✅ El gerente tiene un modelo mental rígido basado en la Teoría X de McGregor</strong><br>
+        Este modelo mental actúa como un filtro que distorsiona la interpretación de la evidencia. Para aplicar la disciplina de Modelos Mentales: (1) <strong>Llevar el supuesto a la superficie</strong>: hacer explícito que "vigilancia = productividad" es un supuesto, no una verdad universal. (2) <strong>Someterlo a escrutinio</strong>: analizar datos reales de otras empresas con trabajo remoto. (3) <strong>Indagación reflexiva</strong>: preguntar "¿qué me haría cambiar de opinión?". Este proceso, que Argyris llama "investigación-acción", es central en las organizaciones que aprenden.
+      </div>
+    </div>
+
+    <div class="ex-box">
+      <h3>Ejercicio 4 — Diseño de una Org. Inteligente</h3>
+      <p>Una universidad colombiana quiere transformarse en una organización inteligente. Actualmente, cada facultad trabaja de forma independiente, no hay procesos de retroalimentación internos y las decisiones son centralizadas. <br><br><strong>Propón al menos 3 iniciativas concretas, indicando qué disciplina activa cada una.</strong></p>
+      <button class="reveal-btn" onclick="toggle('ans4')">Ver Respuesta</button>
+      <div id="ans4" class="answer-box">
+        <strong>✅ Respuesta modelo:</strong><br><br>
+        <strong>1. Foros Interfacultades mensuales</strong> → <em>Aprendizaje en Equipo</em>: espacios donde docentes de distintas áreas comparten investigaciones y metodologías sin jerarquías.<br><br>
+        <strong>2. Proceso de construcción participativa del Plan Estratégico</strong> → <em>Visión Compartida</em>: involucrar a estudiantes, docentes y administrativos en la definición del futuro de la institución.<br><br>
+        <strong>3. Programa de revisión de procesos académicos con datos</strong> → <em>Modelos Mentales + Pensamiento Sistémico</em>: cuestionar prácticas pedagógicas actuales con evidencia, viendo cómo afectan al sistema de aprendizaje en su conjunto.<br><br>
+        <strong>Bonus:</strong> Espacios de formación docente y autoconocimiento → <em>Dominio Personal</em>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JUEGOS -->
+<section id="juegos" style="background:rgba(255,255,255,.02)">
+  <div class="section-inner fade-up">
+    <div class="sec-label">06 · Juegos Interactivos</div>
+    <h2 class="sec-title">Aprende Jugando</h2>
+    <p class="sec-desc">Tres actividades interactivas para reforzar el aprendizaje de forma divertida.</p>
+    <div class="game-tabs">
+      <button class="game-tab active" onclick="switchGame('g1')">🔗 Relacionar Conceptos</button>
+      <button class="game-tab" onclick="switchGame('g2')">🔤 Descifra la Palabra</button>
+      <button class="game-tab" onclick="switchGame('g3')">✅ Verdadero o Falso</button>
+    </div>
+
+    <!-- GAME 1: MATCH -->
+    <div id="g1" class="game-panel active">
+      <h3 style="margin-bottom:8px;font-family:'Playfair Display',serif">Relaciona cada disciplina con su descripción</h3>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:20px">Haz clic en una disciplina y luego en su descripción correcta.</p>
+      <div class="match-grid">
+        <div class="match-col" id="leftCol"></div>
+        <div class="match-col" id="rightCol"></div>
+      </div>
+      <div class="match-msg" id="matchMsg"></div>
+      <div class="match-score" id="matchScore"></div>
+      <button class="reveal-btn" style="margin-top:16px" onclick="resetMatch()">🔄 Reiniciar</button>
+    </div>
+
+    <!-- GAME 2: SCRAMBLE -->
+    <div id="g2" class="game-panel">
+      <h3 style="margin-bottom:16px;font-family:'Playfair Display',serif">¿Puedes descifrar el concepto?</h3>
+      <div class="word-display" id="scrambledWord"></div>
+      <div class="word-hint" id="wordHint"></div>
+      <div class="word-input-row">
+        <input class="word-input" id="wordInput" type="text" placeholder="Tu respuesta..." onkeydown="if(event.key==='Enter')checkWord()"/>
+        <button class="btn btn-primary" onclick="checkWord()">Verificar</button>
+        <button class="btn btn-outline" onclick="nextWord()">Siguiente</button>
+      </div>
+      <div class="word-result" id="wordResult"></div>
+      <div class="game-progress" id="wordProgress"></div>
+    </div>
+
+    <!-- GAME 3: TRUE/FALSE -->
+    <div id="g3" class="game-panel">
+      <h3 style="margin-bottom:20px;font-family:'Playfair Display',serif">Verdadero o Falso</h3>
+      <div class="tf-question" id="tfQ"></div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(true)">✅ Verdadero</button>
+        <button class="tf-btn" onclick="checkTF(false)">❌ Falso</button>
+      </div>
+      <div class="tf-feedback" id="tfFeedback"></div>
+      <div class="tf-score" id="tfScore"></div>
+      <div class="tf-next"><button class="btn btn-outline" onclick="nextTF()" id="tfNextBtn" style="display:none">Siguiente →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEOS -->
+<section id="videos">
+  <div class="section-inner fade-up">
+    <div class="sec-label">07 · Videos de Apoyo</div>
+    <h2 class="sec-title">Recursos Audiovisuales</h2>
+    <p class="sec-desc">Videos curados para ampliar y reforzar los conceptos de esta OVA.</p>
+    <div class="videos-grid">
+      <div class="vid-card">
+        <div class="vid-embed"><iframe src="https://www.youtube.com/embed/0QtQqZ6Q5-o" allowfullscreen title="Peter Senge La Quinta Disciplina"></iframe></div>
+        <div class="vid-info">
+          <h4>Peter Senge — La Quinta Disciplina</h4>
+          <p>Conferencia del propio Peter Senge explicando los fundamentos de las organizaciones que aprenden y las cinco disciplinas.</p>
+        </div>
+      </div>
+      <div class="vid-card">
+        <div class="vid-embed"><iframe src="https://www.youtube.com/embed/L2ycWvGnVFs" allowfullscreen title="Organizaciones Inteligentes Senge"></iframe></div>
+        <div class="vid-info">
+          <h4>Organizaciones Inteligentes — Resumen</h4>
+          <p>Explicación clara y visual de las cinco disciplinas de Senge aplicadas al entorno organizacional contemporáneo.</p>
+        </div>
+      </div>
+      <div class="vid-card">
+        <div class="vid-embed"><iframe src="https://www.youtube.com/embed/ReRcHdeUG9Y" allowfullscreen title="Pensamiento Sistémico TGS"></iframe></div>
+        <div class="vid-info">
+          <h4>Pensamiento Sistémico en la Organización</h4>
+          <p>Video educativo sobre cómo el pensamiento sistémico (la quinta disciplina) integra y potencia las demás en el contexto de la TGS.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" style="background:rgba(255,255,255,.02)">
+  <div class="section-inner fade-up">
+    <div class="sec-label">08 · Evaluación</div>
+    <h2 class="sec-title">Quiz Final</h2>
+    <p class="sec-desc">10 preguntas para evaluar tu comprensión. Puntaje automático con retroalimentación inmediata.</p>
+    <div class="quiz-wrap">
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="qProgress" style="width:0%"></div></div>
+      <div id="quizContainer"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CRÉDITOS -->
+<section id="creditos">
+  <div class="section-inner fade-up">
+    <div class="sec-label">09 · Créditos</div>
+    <h2 class="sec-title">Ficha Técnica</h2>
+    <p class="sec-desc">Autoría, herramientas utilizadas y referencias bibliográficas de esta OVA.</p>
+    <div class="credits-grid">
+      <div class="cred-card">
+        <h4>👩‍💻 Autoría</h4>
+        <p><strong>Estudiante:</strong> Rodríguez Sánchez Andrea Xiomara<br>
+        <strong>Proyecto N°:</strong> 17<br>
+        <strong>Tema:</strong> Disciplina y Organizaciones Inteligentes<br>
+        <strong>Asignatura:</strong> Teoría General de Sistemas<br>
+        <strong>Universidad:</strong> Universidad Simón Bolívar — Sede Cúcuta<br>
+        <strong>Año:</strong> 2025</p>
+      </div>
+      <div class="cred-card">
+        <h4>🛠️ Herramientas Usadas</h4>
+        <ul>
+          <li>HTML5, CSS3, JavaScript (Vanilla)</li>
+          <li>Google Fonts (Playfair Display, DM Sans)</li>
+          <li>Claude AI (asistencia en desarrollo)</li>
+          <li>YouTube (videos curados)</li>
+          <li>GitHub Pages (alojamiento)</li>
+        </ul>
+      </div>
+      <div class="cred-card" style="grid-column:1/-1">
+        <h4>📚 Referencias Bibliográficas</h4>
+        <div class="ref-item">Senge, P. M. (1990). <em>La Quinta Disciplina: El arte y la práctica de la organización abierta al aprendizaje.</em> Granica.</div>
+        <div class="ref-item">Argyris, C., & Schön, D. A. (1978). <em>Organizational Learning: A Theory of Action Perspective.</em> Addison-Wesley.</div>
+        <div class="ref-item">Garvin, D. A. (1993). Building a Learning Organization. <em>Harvard Business Review</em>, 71(4), 78–91.</div>
+        <div class="ref-item">Von Bertalanffy, L. (1968). <em>General System Theory: Foundations, Development, Applications.</em> George Braziller.</div>
+        <div class="ref-item">McGregor, D. (1960). <em>The Human Side of Enterprise.</em> McGraw-Hill.</div>
+        <div class="ref-item">Nonaka, I., & Takeuchi, H. (1995). <em>The Knowledge-Creating Company.</em> Oxford University Press.</div>
+        <div class="ref-item">Checkland, P. (1981). <em>Systems Thinking, Systems Practice.</em> John Wiley & Sons.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>OVA #17 · Disciplina y Organizaciones Inteligentes · Rodríguez Sánchez Andrea Xiomara · Universidad Simón Bolívar Cúcuta · 2025</p>
+</footer>
+
+<script>
+/* ── CANVAS PARTICLES ── */
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+let W,H,pts=[];
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<80;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5});
+function animBg(){
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>W)p.vx*=-1;
+    if(p.y<0||p.y>H)p.vy*=-1;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,229,255,.6)';ctx.fill();
+  });
+  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle=`rgba(0,229,255,${.15*(1-d/120)})`;ctx.lineWidth=.5;ctx.stroke();}
+  }));
+  requestAnimationFrame(animBg);
+}
+animBg();
+
+/* ── NAV ── */
+function toggleNav(){document.getElementById('navLinks').classList.toggle('open')}
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
+
+/* ── SCROLL FADE ── */
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.1});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+/* ── EXERCISE TOGGLE ── */
+function toggle(id){const el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block'}
+
+/* ── GAME TABS ── */
+function switchGame(id){
+  document.querySelectorAll('.game-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.game-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+/* ── GAME 1: MATCH ── */
+const matchData=[
+  {left:'Pensamiento Sistémico',right:'Ver el todo y sus interrelaciones'},
+  {left:'Dominio Personal',right:'Crecimiento y aspiración individual'},
+  {left:'Modelos Mentales',right:'Supuestos internos que filtran la realidad'},
+  {left:'Visión Compartida',right:'Futuro deseado construido colectivamente'},
+  {left:'Aprendizaje en Equipo',right:'Diálogo genuino y pensar juntos'},
+];
+let selLeft=null,selRight=null,matchScore=0;
+function buildMatch(){
+  const lc=document.getElementById('leftCol'),rc=document.getElementById('rightCol');
+  lc.innerHTML='';rc.innerHTML='';
+  const rights=[...matchData].sort(()=>Math.random()-.5);
+  matchData.forEach((d,i)=>{
+    const l=document.createElement('div');l.className='match-item';l.textContent=d.left;l.dataset.idx=i;l.dataset.side='left';l.onclick=()=>selectMatch(l);lc.appendChild(l);
+  });
+  rights.forEach(d=>{
+    const r=document.createElement('div');r.className='match-item';r.textContent=d.right;r.dataset.val=d.left;r.dataset.side='right';r.onclick=()=>selectMatch(r);rc.appendChild(r);
+  });
+  matchScore=0;updateMatchScore();
+}
+function selectMatch(el){
+  if(el.classList.contains('correct'))return;
+  if(el.dataset.side==='left'){
+    document.querySelectorAll('#leftCol .match-item').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');selLeft=el;
+  } else {
+    document.querySelectorAll('#rightCol .match-item').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');selRight=el;
+  }
+  if(selLeft&&selRight){
+    const correct=matchData[selLeft.dataset.idx].left===selRight.dataset.val;
+    if(correct){
+      selLeft.classList.remove('selected');selLeft.classList.add('correct');
+      selRight.classList.remove('selected');selRight.classList.add('correct');
+      matchScore++;document.getElementById('matchMsg').textContent='✅ ¡Correcto!';
+      document.getElementById('matchMsg').style.color='#10b981';
+    } else {
+      selLeft.classList.add('wrong');selRight.classList.add('wrong');
+      document.getElementById('matchMsg').textContent='❌ Inténtalo de nuevo';
+      document.getElementById('matchMsg').style.color='#f43f5e';
+      setTimeout(()=>{selLeft.classList.remove('wrong','selected');selRight.classList.remove('wrong','selected');document.getElementById('matchMsg').textContent='';},900);
+    }
+    selLeft=null;selRight=null;updateMatchScore();
+  }
+}
+function updateMatchScore(){document.getElementById('matchScore').textContent=`Pares encontrados: ${matchScore} / ${matchData.length}`}
+function resetMatch(){selLeft=null;selRight=null;buildMatch();document.getElementById('matchMsg').textContent=''}
+buildMatch();
+
+/* ── GAME 2: SCRAMBLE ── */
+const wordBank=[
+  {word:'HOMEOSTASIS',hint:'Tendencia de un sistema a mantener su equilibrio interno'},
+  {word:'RETROALIMENTACION',hint:'Proceso por el cual la salida de un sistema vuelve como entrada'},
+  {word:'SINERGIA',hint:'El todo es mayor que la suma de sus partes'},
+  {word:'CIBERNETICA',hint:'Estudio del control y la comunicación en sistemas'},
+  {word:'HOLISMO',hint:'Enfoque que considera el sistema como un todo integrado'},
+  {word:'ENTROPIA',hint:'Tendencia de los sistemas cerrados al desorden'},
+  {word:'EMERGENCIA',hint:'Propiedades que surgen de la interacción de los componentes del sistema'},
+];
+let wIdx=0,wCorrect=0;
+function scramble(s){return s.split('').sort(()=>Math.random()-.5).join('')}
+function loadWord(){
+  const w=wordBank[wIdx];
+  let sc=scramble(w.word);
+  while(sc===w.word)sc=scramble(w.word);
+  document.getElementById('scrambledWord').textContent=sc;
+  document.getElementById('wordHint').textContent='Pista: '+w.hint;
+  document.getElementById('wordInput').value='';
+  document.getElementById('wordResult').textContent='';
+  document.getElementById('wordProgress').textContent=`Palabra ${wIdx+1} de ${wordBank.length} · Correctas: ${wCorrect}`;
+}
+function checkWord(){
+  const ans=document.getElementById('wordInput').value.trim().toUpperCase().replace(/\s/g,'');
+  if(ans===wordBank[wIdx].word){
+    document.getElementById('wordResult').textContent='✅ ¡Correcto!';
+    document.getElementById('wordResult').style.color='#10b981';
+    wCorrect++;setTimeout(nextWord,800);
+  } else {
+    document.getElementById('wordResult').textContent='❌ Intenta de nuevo';
+    document.getElementById('wordResult').style.color='#f43f5e';
+  }
+}
+function nextWord(){wIdx=(wIdx+1)%wordBank.length;loadWord()}
+loadWord();
+
+/* ── GAME 3: TRUE/FALSE ── */
+const tfData=[
+  {q:'Peter Senge publicó "La Quinta Disciplina" en 1990, definiendo las organizaciones que aprenden.',a:true,fb:'Correcto. La obra fue publicada en 1990 y se convirtió en un clásico de la administración moderna.'},
+  {q:'El Pensamiento Sistémico es la primera disciplina de Senge y puede aplicarse de forma aislada sin las demás.',a:false,fb:'Falso. El Pensamiento Sistémico es la disciplina integradora (la "quinta"). Sin las otras cuatro disciplinas pierde su potencia transformadora.'},
+  {q:'Los modelos mentales son creencias arraigadas que pueden impedir ver nuevas oportunidades organizacionales.',a:true,fb:'Correcto. Los modelos mentales actúan como filtros cognitivos que pueden limitar la innovación y el aprendizaje si no se cuestionan.'},
+  {q:'El aprendizaje organizacional solo ocurre cuando todos los empleados reciben formación formal y certificada.',a:false,fb:'Falso. El aprendizaje organizacional también ocurre de forma informal, a través de la práctica, el diálogo, la experiencia compartida y la reflexión colectiva.'},
+  {q:'La Visión Compartida, según Senge, debe ser impuesta por la alta gerencia para garantizar la alineación de todos los miembros.',a:false,fb:'Falso. La visión compartida debe emerger del diálogo genuino. Cuando se impone, genera cumplimiento superficial, no compromiso real.'},
+  {q:'Un bucle de retroalimentación reforzador amplifica continuamente una conducta o tendencia en el sistema.',a:true,fb:'Correcto. También llamado "círculo vicioso" o "espiral virtuosa" según el contexto, el bucle reforzador intensifica el comportamiento inicial.'},
+];
+let tfIdx=0,tfRight=0,tfAnswered=false;
+function loadTF(){
+  document.getElementById('tfQ').textContent=tfData[tfIdx].q;
+  document.getElementById('tfFeedback').textContent='';
+  document.getElementById('tfFeedback').style.color=var_muted();
+  document.getElementById('tfScore').textContent=`Pregunta ${tfIdx+1} de ${tfData.length} · Correctas: ${tfRight}`;
+  document.getElementById('tfNextBtn').style.display='none';
+  tfAnswered=false;
+}
+function var_muted(){return getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#94a3b8'}
+function checkTF(ans){
+  if(tfAnswered)return;tfAnswered=true;
+  const d=tfData[tfIdx];
+  if(ans===d.a){
+    document.getElementById('tfFeedback').textContent='✅ '+d.fb;
+    document.getElementById('tfFeedback').style.color='#10b981';
+    tfRight++;
+  } else {
+    document.getElementById('tfFeedback').textContent='❌ '+d.fb;
+    document.getElementById('tfFeedback').style.color='#f43f5e';
+  }
+  document.getElementById('tfScore').textContent=`Pregunta ${tfIdx+1} de ${tfData.length} · Correctas: ${tfRight}`;
+  document.getElementById('tfNextBtn').style.display='inline-block';
+}
+function nextTF(){
+  tfIdx=(tfIdx+1)%tfData.length;
+  if(tfIdx===0)tfRight=0;
+  loadTF();
+}
+loadTF();
+
+/* ── QUIZ ── */
+const quizData=[
+  {q:'¿Cuál es el nombre de la obra de Peter Senge publicada en 1990 que establece el marco de las organizaciones inteligentes?',opts:['El Arte de la Guerra','La Quinta Disciplina','Gestión del Conocimiento','La Organización del Futuro'],ans:1,fb:'La Quinta Disciplina (1990) es la obra seminal de Peter Senge donde desarrolla las cinco disciplinas de las organizaciones que aprenden.'},
+  {q:'¿Cuál de las siguientes es considerada la disciplina integradora en el modelo de Senge?',opts:['Dominio Personal','Visión Compartida','Pensamiento Sistémico','Aprendizaje en Equipo'],ans:2,fb:'El Pensamiento Sistémico es la "quinta disciplina" que integra y potencia a las otras cuatro, permitiendo ver las interdependencias del sistema.'},
+  {q:'Los modelos mentales son:',opts:['Representaciones matemáticas del sistema','Supuestos e imágenes internamente arraigadas que influyen en nuestra comprensión del mundo','Herramientas de software para modelar organizaciones','Organigramas jerarquizados de la empresa'],ans:1,fb:'Los modelos mentales son supuestos e imágenes mentales arraigadas que filtran cómo percibimos el mundo y tomamos decisiones.'},
+  {q:'¿Qué distingue el aprendizaje de "doble circuito" del de "circuito simple"?',opts:['El doble circuito usa más recursos','El circuito simple cuestiona supuestos subyacentes','El doble circuito cuestiona los supuestos subyacentes, no solo corrige errores','Son términos equivalentes'],ans:2,fb:'Según Argyris y Schön, el aprendizaje de doble circuito va más allá de corregir errores (circuito simple) para cuestionar los supuestos y normas que generaron el error.'},
+  {q:'¿Cuál empresa es un ejemplo clásico de organización inteligente por su sistema de mejora continua Kaizen?',opts:['Microsoft','Apple','Toyota','Amazon'],ans:2,fb:'Toyota y su sistema TPS (Toyota Production System) con la filosofía Kaizen es un referente mundial de organización que aprende y mejora continuamente.'},
+  {q:'Un bucle de retroalimentación compensador en un sistema organizacional:',opts:['Amplifica continuamente un comportamiento','Busca estabilizar el sistema hacia un objetivo','Siempre genera efectos negativos','Es equivalente al aprendizaje de circuito simple'],ans:1,fb:'Los bucles compensadores buscan llevar el sistema hacia un estado objetivo o de equilibrio, estabilizando el comportamiento.'},
+  {q:'La Visión Compartida según Senge debe:',opts:['Ser definida exclusivamente por la gerencia','Emerger del diálogo genuino entre los miembros de la organización','Estar enfocada solo en metas financieras','Cambiar anualmente para adaptarse al mercado'],ans:1,fb:'La visión compartida genuina emerge de un proceso dialogico. Cuando se impone desde arriba, genera cumplimiento pero no el compromiso real que necesita una organización inteligente.'},
+  {q:'¿Cuál de las siguientes NO es una de las cinco disciplinas de Senge?',opts:['Dominio Personal','Gestión por Objetivos','Aprendizaje en Equipo','Modelos Mentales'],ans:1,fb:'La Gestión por Objetivos (MBO) es una herramienta de administración, pero no es una de las cinco disciplinas de Senge. Las cinco son: Pensamiento Sistémico, Dominio Personal, Modelos Mentales, Visión Compartida y Aprendizaje en Equipo.'},
+  {q:'El concepto de "palanca de cambio" en el pensamiento sistémico se refiere a:',opts:['Herramientas físicas para mover maquinaria','El punto del sistema donde una pequeña acción produce grandes cambios','La persona más influyente de la organización','Un tipo de contrato organizacional'],ans:1,fb:'En el pensamiento sistémico, la palanca de cambio (leverage point) es el lugar del sistema donde una pequeña intervención puede producir cambios significativos y duraderos.'},
+  {q:'¿Cuál es la relación entre la Teoría General de Sistemas (TGS) y las organizaciones inteligentes?',opts:['No tienen relación','La TGS provee el marco conceptual para entender las organizaciones como sistemas complejos que aprenden','Las organizaciones inteligentes reemplazaron a la TGS','La TGS solo aplica a sistemas físicos, no organizacionales'],ans:1,fb:'La TGS provee el fundamento teórico: las organizaciones son sistemas abiertos con entradas, procesos, salidas y retroalimentación. El Pensamiento Sistémico de Senge es, esencialmente, una aplicación de la TGS al aprendizaje organizacional.'},
+];
+let qCurrent=0,qScore=0,qAnswered=false;
+function renderQuiz(){
+  const c=document.getElementById('quizContainer');
+  if(qCurrent>=quizData.length){
+    const pct=Math.round(qScore/quizData.length*100);
+    let grade='';
+    if(pct>=90)grade='🏆 Excelente — Demuestras dominio del tema';
+    else if(pct>=70)grade='👍 Bueno — Comprensión sólida con algunos vacíos';
+    else if(pct>=50)grade='📖 Regular — Se recomienda repasar el material';
+    else grade='💡 Necesitas repasar — Vuelve a estudiar los conceptos';
+    c.innerHTML=`<div class="quiz-result"><div class="big-score">${qScore}/${quizData.length}</div><p>${pct}% de respuestas correctas</p><div class="grade">${grade}</div><button class="btn btn-primary" style="margin-top:28px" onclick="resetQuiz()">Intentar de nuevo</button></div>`;
+    document.getElementById('qProgress').style.width='100%';
+    return;
+  }
+  const d=quizData[qCurrent];
+  document.getElementById('qProgress').style.width=(qCurrent/quizData.length*100)+'%';
+  c.innerHTML=`<div class="quiz-q">Pregunta ${qCurrent+1} de ${quizData.length}: ${d.q}</div>
+  <div class="quiz-opts">${d.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div>
+  <div class="quiz-feedback" id="qfb"></div>
+  <div class="quiz-nav"><span class="quiz-counter">Correctas: ${qScore}</span><button class="btn btn-outline" id="qnext" style="display:none" onclick="nextQ()">Siguiente →</button></div>`;
+  qAnswered=false;
+}
+function answerQuiz(i){
+  if(qAnswered)return;qAnswered=true;
+  const d=quizData[qCurrent];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.style.pointerEvents='none');
+  if(i===d.ans){opts[i].classList.add('correct');qScore++;document.getElementById('qfb').textContent='✅ '+d.fb;document.getElementById('qfb').style.color='#10b981';}
+  else{opts[i].classList.add('wrong');opts[d.ans].classList.add('correct');document.getElementById('qfb').textContent='❌ '+d.fb;document.getElementById('qfb').style.color='#f43f5e';}
+  document.getElementById('qnext').style.display='inline-block';
+}
+function nextQ(){qCurrent++;renderQuiz()}
+function resetQuiz(){qCurrent=0;qScore=0;renderQuiz()}
+renderQuiz();
+</script>
+</body>
+</html>
