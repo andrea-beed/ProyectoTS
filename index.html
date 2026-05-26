@@ -770,9 +770,10 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 24px;border-to
       <div class="cred-card">
         <h4>👩‍💻 Autoría</h4>
         <p><strong>Estudiante:</strong> Andrea Xiomara Rodríguez Sánchez<br>
-        <strong>Proyecto N°:</strong> 17<br>
+        <strong>Proyecto N° </strong> 17<br>
         <strong>Tema:</strong> Disciplina y Organizaciones Inteligentes<br>
         <strong>Asignatura:</strong> Teoría General de Sistemas<br>
+        <strong>Docente:</strong> Eddy Marleny Ortiz Martínez<br> 
         <strong>Universidad:</strong> Universidad Simón Bolívar — Sede Cúcuta<br>
         <strong>Año:</strong> 2026</p>
       </div>
@@ -815,7 +816,7 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 24px;border-to
 
 <script>
 /* ══════════════════════════════════════════
-   🔊 AUDIO ENGINE (Web Audio API — sin archivos externos)
+   AUDIO ENGINE (Web Audio API — sin archivos externos)
 ══════════════════════════════════════════ */
 const AC = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -867,7 +868,7 @@ function sfxReveal() {
 document.addEventListener('click', () => { if(AC.state === 'suspended') AC.resume(); }, { once: true });
 
 /* ══════════════════════════════════════════
-   🍞 TOAST
+   TOAST
 ══════════════════════════════════════════ */
 let toastTimer;
 function showToast(msg, type='info', dur=2200) {
@@ -879,7 +880,7 @@ function showToast(msg, type='info', dur=2200) {
 }
 
 /* ══════════════════════════════════════════
-   ▲ BACK TO TOP
+   BACK TO TOP
 ══════════════════════════════════════════ */
 window.addEventListener('scroll', () => {
   const btn = document.getElementById('backTop');
@@ -893,7 +894,7 @@ window.addEventListener('scroll', () => {
 });
 
 /* ══════════════════════════════════════════
-   🔵 SECTION TRACKER
+   SECTION TRACKER
 ══════════════════════════════════════════ */
 const trackerSections = [
   { id:'hero',    label:'Inicio' },
@@ -931,7 +932,7 @@ function updateTracker() {
 updateTracker();
 
 /* ══════════════════════════════════════════
-   🔢 ANIMATED STAT COUNTERS
+   ANIMATED STAT COUNTERS
 ══════════════════════════════════════════ */
 const statTargets = [5, 3, 10, 6];
 const statEls = document.querySelectorAll('.stat-num');
@@ -956,7 +957,7 @@ const statObserver = new IntersectionObserver(entries => {
 if (statEls[0]) statObserver.observe(statEls[0].closest('.stats-bar') || statEls[0]);
 
 /* ══════════════════════════════════════════
-   🖱️ CURSOR
+   CURSOR
 ══════════════════════════════════════════ */
 const cur = document.getElementById('cursor'), ring = document.getElementById('cursor-ring');
 let mx=0, my=0, rx=0, ry=0;
@@ -976,7 +977,7 @@ document.querySelectorAll('a,button,.card,.disc-card,.match-item,.quiz-opt,.tf-b
 });
 
 /* ══════════════════════════════════════════
-   🌌 CANVAS BG
+   CANVAS BG
 ══════════════════════════════════════════ */
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
@@ -1003,7 +1004,7 @@ function animBg() {
 animBg();
 
 /* ══════════════════════════════════════════
-   📱 NAV
+   NAV
 ══════════════════════════════════════════ */
 function toggleNav() { document.getElementById('navLinks').classList.toggle('open'); }
 document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => {
@@ -1011,7 +1012,7 @@ document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click
 }));
 
 /* ══════════════════════════════════════════
-   👁️ SCROLL FADE
+   SCROLL FADE
 ══════════════════════════════════════════ */
 const obs = new IntersectionObserver(entries => entries.forEach(e => {
   if(e.isIntersecting) e.target.classList.add('visible');
@@ -1019,7 +1020,7 @@ const obs = new IntersectionObserver(entries => entries.forEach(e => {
 document.querySelectorAll('.fade-up,.fade-left').forEach(el => obs.observe(el));
 
 /* ══════════════════════════════════════════
-   📖 EXERCISE TOGGLE
+   EXERCISE TOGGLE
 ══════════════════════════════════════════ */
 function toggle(id) {
   const el = document.getElementById(id);
@@ -1031,7 +1032,7 @@ function toggle(id) {
 }
 
 /* ══════════════════════════════════════════
-   🎮 GAME TABS
+   GAME TABS
 ══════════════════════════════════════════ */
 function switchGame(id, btn) {
   sfxClick();
@@ -1042,7 +1043,7 @@ function switchGame(id, btn) {
 }
 
 /* ══════════════════════════════════════════
-   🔗 GAME 1: MATCH
+   GAME 1: MATCH
 ══════════════════════════════════════════ */
 const matchData = [
   {left:'Pensamiento Sistémico', right:'Ver el todo y sus interrelaciones'},
@@ -1114,7 +1115,7 @@ function resetMatch() { selLeft=null; selRight=null; sfxClick(); buildMatch(); d
 buildMatch();
 
 /* ══════════════════════════════════════════
-   🔤 GAME 2: SCRAMBLE
+   GAME 2: SCRAMBLE
 ══════════════════════════════════════════ */
 const wordBank = [
   {word:'HOMEOSTASIS',      hint:'Tendencia de un sistema a mantener su equilibrio interno'},
@@ -1162,7 +1163,7 @@ function nextWord() {
 loadWord();
 
 /* ══════════════════════════════════════════
-   ✅ GAME 3: TRUE/FALSE
+   GAME 3: TRUE/FALSE
 ══════════════════════════════════════════ */
 const tfData = [
   {q:'Peter Senge publicó "La Quinta Disciplina" en 1990, definiendo las organizaciones que aprenden.', a:true,  fb:'Correcto. La obra fue publicada en 1990 y se convirtió en un clásico de la administración moderna.'},
@@ -1208,7 +1209,7 @@ function nextTF() {
 loadTF();
 
 /* ══════════════════════════════════════════
-   🧠 QUIZ
+   QUIZ
 ══════════════════════════════════════════ */
 const quizData = [
   {q:'¿Cuál es el nombre de la obra de Peter Senge publicada en 1990 que establece el marco de las organizaciones inteligentes?',opts:['El Arte de la Guerra','La Quinta Disciplina','Gestión del Conocimiento','La Organización del Futuro'],ans:1,fb:'La Quinta Disciplina (1990) es la obra seminal de Peter Senge donde desarrolla las cinco disciplinas de las organizaciones que aprenden.'},
@@ -1273,7 +1274,7 @@ function resetQuiz() { sfxClick(); qCurrent=0; qScore=0; renderQuiz(); }
 renderQuiz();
 
 /* ══════════════════════════════════════════
-   🎬 VIDEO CLICK TO PLAY
+   VIDEO 
 ══════════════════════════════════════════ */
 function playVideo(id, videoId) {
   sfxClick();
@@ -1287,7 +1288,7 @@ function playVideo(id, videoId) {
 }
 
 /* ══════════════════════════════════════════
-   📝 INTERACTIVE EXERCISES
+   INTERACTIVE EXERCISES
 ══════════════════════════════════════════ */
 const exFeedback = {
   1: {
